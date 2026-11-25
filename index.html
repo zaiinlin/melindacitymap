@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Jelajahi Malang by melinda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css'">
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<main id="home"><div class="wrap">
+  <div class="head">
+    <div class="from"><svg class="i" viewBox="0 0 24 24"><use href="#pin"/></svg>Berangkat dari <span>Edohouse, Kasin</span></div>
+    <h1>Jelajahi Malang</h1>
+    <p class="sub">Jarak dan rute dihitung dari Edohouse. Pilih tempat, lihat ongkos ojolnya, lalu berangkat.</p>
+    <label class="search"><svg class="i" viewBox="0 0 24 24"><use href="#search"/></svg><input id="q" type="search" placeholder="Cari tempat, jalan, atau kategori" aria-label="Cari tempat" autocomplete="off"></label>
+    <div class="cats" id="cats" role="group" aria-label="Kategori"></div>
+  </div>
+  <section id="nearWrap"><h2 class="sec">Terdekat dari smkn4malang <small>geser</small></h2><div class="rail" id="rail"></div></section>
+  <h2 class="sec" id="allT">Semua tempat <small id="cnt"></small></h2>
+  <div class="grid" id="grid"></div>
+</div></main>
+<section id="fav" hidden><div class="wrap"><h1>Tersimpan</h1><p class="sub" id="favSub"></p><div id="plan"></div><div class="grid" id="favGrid" style="margin-top:22px"></div></div></section>
+<section id="mapView" hidden aria-label="Peta">
+  <div id="map"></div>
+  <div class="mapcats"><div class="cats" id="mcats"></div></div>
+  <div class="rbar" id="rbar"><div><b id="rbN"></b><span id="rbI"></span></div><button id="rbGo">Mulai</button><button id="rbC" hidden>Pusatkan</button><button id="rbX">Hapus rute</button></div>
+  <div class="maptool"><button id="bSat" aria-label="Ganti jenis peta">Satelit</button></div>
+  <div class="peek" id="peek"></div>
+</section>
+<nav class="tabs" id="tabs" aria-label="Menu utama">
+  <button data-v="home" aria-current="page"><svg class="i" viewBox="0 0 24 24"><use href="#compass"/></svg>Jelajah</button>
+  <button data-v="map"><svg class="i" viewBox="0 0 24 24"><use href="#mapi"/></svg>Peta</button>
+  <button data-v="fav"><svg class="i" viewBox="0 0 24 24"><use href="#heart"/></svg>Tersimpan</button>
+</nav>
+<div class="scrim" id="scrim"></div>
+<aside class="page" id="page" role="dialog" aria-modal="true" aria-label="Detail tempat"></aside>
+<div id="toast" role="status" aria-live="polite"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="compass"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></g>
+<g id="mapi"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/></g>
+<g id="heart"><path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.4-7 10-7 10z"/></g>
+<g id="search"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></g>
+<g id="pin"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></g>
+<g id="star"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8z"/></g>
+<g id="clock"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g>
+<g id="ticket"><path d="M3 9a2 2 0 0 0 0 6v3h18v-3a2 2 0 0 1 0-6V6H3zM14 6v12"/></g>
+<g id="back"><path d="m15 5-7 7 7 7"/></g>
+<g id="close"><path d="M6 6l12 12M18 6 6 18"/></g>
+<g id="route"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/></g>
+<g id="out"><path d="M8 16 16 8M9 8h7v7"/></g>
+<g id="share"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/></g>
+<g id="all"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></g>
+<g id="Alam"><path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14M5 19c3-4 6-6 9-8"/></g>
+<g id="Budaya"><path d="m4 10 8-6 8 6M5 10v8m4-8v8m6-8v8m4-8v8M3 20h18"/></g>
+<g id="Sejarah"><path d="M5 20V9l7-5 7 5v11M9 20v-6h6v6M3 20h18"/></g>
+<g id="Religi"><path d="M5 20v-6a7 7 0 0 1 14 0v6M3 20h18M12 4V2M10 20v-4h4v4"/></g>
+<g id="Kuliner"><path d="M7 3v8m-2-8v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.5 1.5-3.5 4-3.5 8H17"/></g>
+<g id="Belanja"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></g>
+<g id="Pertanian"><path d="M12 21v-9M12 12C12 8 9 6 5 6c0 4 3 6 7 6zM12 14c0-3 2.5-5 7-5 0 3.5-3 5-7 5z"/></g>
+<g id="Petualangan"><path d="m3 19 6-11 4 7 2-3 6 7z"/></g>
+<g id="Buatan"><circle cx="12" cy="10" r="6"/><path d="M12 4v12M6 10h12M8 21l4-5 4 5"/></g>
+</defs></svg>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;var f=document.createElement('script');f.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';document.head.appendChild(f)"></script>
+<script src="script.js"></script>
+</body></html>
